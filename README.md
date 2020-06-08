@@ -1,2 +1,2 @@
 # HAB_inven
-Hat and Beyond inventory backend
+Hat and Beyond general inventory system

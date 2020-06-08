@@ -1,0 +1,1 @@
+rsync --exclude 'node_modules' --exclude 'credentials.json' --exclude 'token.json' --exclude 'config.json' --exclude 'log' --exclude 'public' --include '*.png' --progress -r ./* ubuntu@ec2-54-183-214-25.us-west-1.compute.amazonaws.com:/opt/HAB_inven
