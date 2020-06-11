@@ -1,7 +1,8 @@
 'use strict';
 
 const mysql = require('mysql');
-const fs = require("fs");
+
+const configReader = require('../util/configReader')();
 let pool = null;
 
 const executeSelect = (sQ, param) => {
@@ -71,9 +72,7 @@ const executeTransaction = queryFuncs => {
 }
 
 module.exports = () => {
-    const configFile = fs.readFileSync('config.json');
-    const connection = JSON.parse(configFile).DBConnect;
-
+    const connection = configReader.getDBConnectionConfig();
     pool = mysql.createPool(connection);
 
     return {

@@ -4,6 +4,8 @@ const fetch = require('node-fetch');
 const express = require('express');
 const router = express.Router();
 
+const configReader = require('../util/configReader')();
+
 let mgr = null;
 let marketplaceMeta = {};
 
@@ -379,9 +381,8 @@ const getNoItemAndTagChangeCnt = (orderDateFr, orderDateTo) => {
 const send_slack_message = async (message) => {
     let res = null;
     try {
-        const configFile = fs.readFileSync('config.json');
-        const SlackAPI = JSON.parse(configFile).SlackAPI;
-        res = await fetch(SlackAPI.messageToken, {
+        const slackConfig = configReader.getSlackConfig();
+        res = await fetch(slackConfig.messageToken, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

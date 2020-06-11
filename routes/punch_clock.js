@@ -8,6 +8,7 @@ const fs = require("fs");
 const readline = require("readline");
 const { google } = require("googleapis");
 
+const configReader = require('../util/configReader')();
 const datetimeUtil = require('../util/datetimeUtil')();
 
 // If modifying these scopes, delete token.json.
@@ -20,9 +21,6 @@ const SCOPES = [
 // time.
 const TOKEN_PATH = "token.json";
 const CREDENTIAL_FILE_PATH = "credentials.json";
-
-let mgr = null;
-let clockInConfig = null;
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -185,7 +183,7 @@ function getLatestEmployeeClockFileId(auth) {
       fileName: null
     }
 
-    getChildren(clockInConfig.CURRENT_YEAR_FOLDER_ID, null)(auth).then(async result => {
+    getChildren(configReader.getClockInConfig().CURRENT_YEAR_FOLDER_ID, null)(auth).then(async result => {
        for (let i = 0; i < result.data.items.length; i++) {
         const id = result.data.items[i].id;
         try {
@@ -219,6 +217,7 @@ function createNewEmployeeClockFile(fileName) {
       const newNum = ("0" + (Number(fileName.substring(0, 2).trim()) + 1)).slice(-2);
           
       const newFileName = `${newNum} [${fromMM}/${fromDD} - ${tillMM}/${tillDD}] Employee Clock In Table`;
+      const clockInConfig = configReader.getClockInConfig()
         
       copyFile(clockInConfig.TEMPLATE_FLIE_ID)(auth).then(result => {
         patchFile(result.data.id, newFileName, clockInConfig.CURRENT_YEAR_FOLDER_ID, clockInConfig.EMPLOYEE_CLOCK_MANAGEMENT_FOLDER_ID)(auth).then(resolve).catch(reject);
@@ -330,8 +329,6 @@ router.get("/punch_employee", function(req, res, next) {
 module.exports = transactionMgr => {
   mgr = transactionMgr;
   
-  const configFile = fs.readFileSync('config.json');
-  clockInConfig = JSON.parse(configFile).ClockIn;
   // authorize().then(auth => {
   //   getChildren(EMPLOYEE_CLOCK_MANAGEMENT_FOLDER_ID)(auth).then(result => {
   //     result.data.items.forEach(v => {

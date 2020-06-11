@@ -8,6 +8,8 @@ const fs = require("fs");
 const readline = require("readline");
 const googleSpreadMgr = require('../util/googleSpreadMgr');
 const datetimeUtil = require('../util/datetimeUtil')();
+const googleMailUtil = require('../util/googleMailUtil');
+const configReader = require('../util/configReader')();
 
 let mgr = null;
 
@@ -291,8 +293,7 @@ router.get('/product_variant_list', (req, res, next) => {
 
 router.post('/export_to_google_spread', function(req, res, next) {
   const list = req.body.ORDER_LIST;
-  const configFile = fs.readFileSync('config.json');
-  const orderFormConfig = JSON.parse(configFile).OrderForm;
+  const orderFormConfig = configReader.getOrderFormConfig;
   googleSpreadMgr.getChildren(orderFormConfig.ORDER_FORM_FORDER_ID, null)
     .then(async list => {
       const metaList = [];
@@ -532,6 +533,26 @@ router.post('/place_order', function(req, res, next) {
             const errMsg = `Failed to get the maximum sequence from PRODUCT_ORDER`;
             res.json({ 'code': 400, 'status': errMsg });
         }
+    });
+});
+
+router.get('/place_order', function(req, res, next) {
+
+  const gmailConfig = configReader.getGmailConfig();
+  const param = {
+    id: gmailConfig.id,
+    to: 'jungbom@hatandbeyond.com',
+    subject: 'Email Test',
+    message: 'Hello World!'
+  }
+
+  googleMailUtil.sendEmail(param)
+    .then(response => {
+      console.log(response);
+      res.json({ status: response.status, statusText: response.statusText });
+    }).catch(err => {
+      console.log(err);
+      res.json({ status: '400', statusText: 'Failed to send email' });
     });
 });
 
