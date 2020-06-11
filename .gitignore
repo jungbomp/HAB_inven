@@ -1,0 +1,11 @@
+/*.xlsx
+/*.csv
+/*.tsv
+credentials.json
+config.json
+token*
+/backup
+/.DS_Store
+/.vscode/
+/log
+/node_modules
