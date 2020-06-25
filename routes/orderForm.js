@@ -9,192 +9,248 @@ const readline = require("readline");
 const googleSpreadMgr = require('../util/googleSpreadMgr');
 const datetimeUtil = require('../util/datetimeUtil')();
 const googleMailUtil = require('../util/googleMailUtil');
+const path = require('path');
 const configReader = require('../util/configReader')();
+
+const readQuery = (queryId) => {
+  const queryPath = path.join(process.env.__basedir, 'query', queryId) + '.sql';
+  return fs.readFileSync(queryPath, {encoding: 'utf8', flag: 'r'});
+}
+
+function getQuery() {
+  if (null === queryStr) {
+    const queryPath = path.join(process.env.__basedir, 'query', queryId) + '.sql';
+    queryStr = fs.readFileSync(queryPath, {encoding: 'utf8', flag: 'r'});
+  }
+
+  return queryStr;
+}
+
+
+const queries = {
+  retrieveProductList: (queryId => {
+    let queryStr = null;
+    return () => {
+      if (null === queryStr) {
+        queryStr = readQuery(queryId);
+      }
+
+      return queryStr;
+    };
+  })('retrieveProductList'),
+
+  retrieveProductOrderList: ((queryId) => {
+    let queryStr = null;
+    return () => {
+      if (null === queryStr) {
+        queryStr = readQuery(queryId);
+      }
+
+      return queryStr;
+    };
+  })('retrieveProductOrderList'),
+  
+  retrieveProductOrderDetail: ((queryId) => {
+    let queryStr = null;
+    return () => {
+      if (null === queryStr) {
+        queryStr = readQuery(queryId);
+      }
+
+      return queryStr;
+    };
+  })('retrieveProductOrderDetail'),
+
+  retrieveProductSizeVariant: ((queryId) => {
+    let queryStr = null;
+    return () => {
+      if (null === queryStr) {
+        queryStr = readQuery(queryId);
+      }
+
+      return queryStr;
+    };
+  })('retrieveProductSizeVariant'),
+
+  retrieveBrandList: (queryId => {
+    let queryStr = null;
+    return () => {
+      if (null === queryStr) {
+        queryStr = readQuery(queryId);
+      }
+
+      return queryStr;
+    };
+  })('retrieveBrandList'),
+
+  retrieveBrandListHasProduct: (queryId => {
+    let queryStr = null;
+    return () => {
+      if (null === queryStr) {
+        queryStr = readQuery(queryId);
+      }
+
+      return queryStr;
+    };
+  })('retrieveBrandListHasProduct'),
+
+  retrieveVendorList: (queryId => {
+    let queryStr = null;
+    return () => {
+      if (null === queryStr) {
+        queryStr = readQuery(queryId);
+      }
+
+      return queryStr;
+    };
+  })('retrieveVendorList'),
+
+  retrieveVendorMap: (queryId => {
+    let queryStr = null;
+    return () => {
+      if (null === queryStr) {
+        queryStr = readQuery(queryId);
+      }
+
+      return queryStr;
+    };
+  })('retrieveVendorMap'),
+
+  retrieveVendorProductList: (queryId => {
+    let queryStr = null;
+    return () => {
+      if (null === queryStr) {
+        queryStr = readQuery(queryId);
+      }
+
+      return queryStr;
+    };
+  })('retrieveVendorProductList'),
+
+  retrieveProductVariantList: (queryId => {
+    let queryStr = null;
+    return () => {
+      if (null === queryStr) {
+        queryStr = readQuery(queryId);
+      }
+
+      return queryStr;
+    };
+  })('retrieveProductVariantList'),
+
+  retrieveMaxProductOrderSeq: (queryId => {
+    let queryStr = null;
+    return () => {
+      if (null === queryStr) {
+        queryStr = readQuery(queryId);
+      }
+
+      return queryStr;
+    };
+  })('retrieveMaxProductOrderSeq'),
+
+  retrieveStdSkuBySizeColor: (queryId => {
+    let queryStr = null;
+    return () => {
+      if (null === queryStr) {
+        queryStr = readQuery(queryId);
+      }
+
+      return queryStr;
+    };
+  })('retrieveStdSkuBySizeColor'),
+
+  insertProductOrder: (queryId => {
+    let queryStr = null;
+    return () => {
+      if (null === queryStr) {
+        queryStr = readQuery(queryId);
+      }
+
+      return queryStr;
+    };
+  })('insertProductOrder')
+}
 
 let mgr = null;
 
 const getBrandList = () => {
-    return new Promise((resolve, reject) => {
-        const sQ = '\
-            SELECT BRAND_CODE\
-                 , BRAND_NAME\
-                 , EMAIL\
-              FROM `BRAND`\
-             ORDER BY BRAND_CODE';
-        
-        mgr.executeSelect(sQ, []).then(resolve).catch(reject);
-    });
+  return new Promise((resolve, reject) => {
+    const query = queries.retrieveBrandList();
+    mgr.executeSelect(query, []).then(resolve).catch(reject);
+  });
 }
 
 const getBrandListHasProducts = () => {
-    return new Promise((resolve, reject) => {
-        const sQ = '\
-            SELECT A.BRAND_CODE\
-                 , A.BRAND_NAME\
-                 , A.EMAIL\
-              FROM `BRAND` A\
-             WHERE EXISTS (\
-                 SELECT 1\
-                   FROM PRODUCT B\
-                  WHERE A.BRAND_CODE = B.BRAND_CODE\
-                )\
-             ORDER BY A.BRAND_CODE';
-        
-        mgr.executeSelect(sQ, []).then(resolve).catch(reject);
-    });
+  return new Promise((resolve, reject) => {
+    const query = queries.retrieveBrandListHasProduct();
+    mgr.executeSelect(query, []).then(resolve).catch(reject);
+  });
 }
 
 const getVendorList = () => {
-    return new Promise((resolve, reject) => {
-        const sQ = '\
-            SELECT VENDOR_CODE\
-                 , VENDOR_NAME\
-                 , VENDOR_EMAIL\
-              FROM `VENDOR`\
-             ORDER BY VENDOR_CODE';
-        
-        mgr.executeSelect(sQ, []).then(resolve).catch(reject);
-    });
+  return new Promise((resolve, reject) => {
+    const query = queries.retrieveVendorList();
+    mgr.executeSelect(query, []).then(resolve).catch(reject);
+  });
 }
 
 const getVendorMap = (vendorCode) => {
-    return new Promise((resolve, reject) => {
-        const sQ = '\
-            SELECT VENDOR_CODE\
-                 , BRAND_CODE\
-              FROM `VENDOR_MAP`\
-             WHERE VENDOR_CODE = ?';
-
-        mgr.executeSelect(sQ, [vendorCode]).then(resolve).catch(reject);
-    });
+  return new Promise((resolve, reject) => {
+    const query = queries.retrieveVendorMap();
+    mgr.executeSelect(query, [vendorCode]).then(resolve).catch(reject);
+  });
 }
 
 const getProductList = (brandCode) => {
-    return new Promise((resolve, reject) => {
-        const sQ = '\
-            SELECT PRODUCT_CODE\
-                 , PRODUCT_TITLE\
-                 , BRAND_CODE\
-                 , PACK_INFO\
-                 , ORDER_BY_SIZE\
-              FROM PRODUCT A\
-             WHERE A.BRAND_CODE = ?\
-               AND EXISTS (\
-                 SELECT B.PRODUCT_CODE\
-                   FROM PRODUCT_MAP B\
-                  WHERE A.PRODUCT_CODE = B.PRODUCT_CODE\
-               )\
-             ORDER BY PRODUCT_CODE';
-
-        mgr.executeSelect(sQ, [brandCode]).then(resolve).catch(reject);
-    });    
+  return new Promise((resolve, reject) => {
+    const query = queries.retrieveProductList();
+    mgr.executeSelect(query, [brandCode]).then(resolve).catch(reject);
+  });
 }
 
-const getVendorProductList = vendorCode => {
-    return new Promise((resolve, reject) => {
-        const sQ = '\
-            SELECT B.PRODUCT_CODE\
-                 , B.PRODUCT_TITLE\
-                 , B.BRAND_CODE\
-                 , B.PACK_INFO\
-                 , B.ORDER_BY_SIZE\
-              FROM VENDOR_MAP A\
-                 , PRODUCT B\
-             WHERE A.BRAND_CODE  = B.BRAND_CODE\
-               AND A.VENDOR_CODE = ?\
-               AND EXISTS (\
-                 SELECT C.PRODUCT_CODE\
-                   FROM PRODUCT_MAP C\
-                  WHERE B.PRODUCT_CODE = C.PRODUCT_CODE\
-               )\
-             ORDER BY B.PRODUCT_CODE';
-
-        mgr.executeSelect(sQ, [vendorCode]).then(resolve).catch(reject);
-    }); 
+const getVendorProductList = (vendorCode) => {
+  return new Promise((resolve, reject) => {
+    const query = queries.retrieveVendorProductList();
+    mgr.executeSelect(query, [vendorCode]).then(resolve).catch(reject);
+  });
 }
 
 const getProductVariantList = (productCode) => {
-    return new Promise((resolve, reject) => {
-        const sQ = '\
-            SELECT A.PRODUCT_CODE\
-                 , A.STD_SKU\
-                 , B.PRODUCT_COLOR\
-                 , B.SIZE_CODE\
-                 , C.SHORT_SIZE_CODE\
-                 , C.SIZE_ORDER\
-              FROM PRODUCT_MAP A\
-                 , INVENTORY B\
-                 , STD_SIZE C\
-             WHERE A.STD_SKU      = B.STD_SKU\
-               AND B.SIZE_CODE    = C.SIZE_CODE\
-               AND A.PRODUCT_CODE = ?\
-             ORDER BY B.PRODUCT_COLOR\
-                 , C.SIZE_ORDER';
-
-        mgr.executeSelect(sQ, [productCode]).then(resolve).catch(reject);
-    });    
+  return new Promise((resolve, reject) => {
+    const query = queries.retrieveProductVariantList();
+    mgr.executeSelect(query, [productCode]).then(resolve).catch(reject);
+  });
 }
 
-const getMaxOrderSeq = (orderDate) => {
-    return new Promise((resolve, reject) => {
-        const sQ = '\
-            SELECT IFNULL(ORDER_SEQ, 0) + 1 AS ORDER_SEQ\
-              FROM (\
-                        SELECT ?              AS ORDER_DATE\
-                             , max(ORDER_SEQ) AS ORDER_SEQ\
-                          FROM PRODUCT_ORDER\
-                         WHERE ORDER_DATE = ?\
-                   ) A';
+const getProductSizeVariantList = productCode => {
+  return new Promise((resolve, reject) => {
+    const query = queries.retrieveProductSizeVariant();
+    mgr.executeSelect(query, [productCode]).then(resolve).catch(reject);
+  });
+}
 
-        mgr.executeSelect(sQ, [orderDate, orderDate]).then(resolve).catch(reject);
-    });
+const getMaxProductOrderSeq = orderDate => {
+  return new Promise((resolve, reject) => {
+    const query = queries.retrieveMaxProductOrderSeq();
+    mgr.executeSelect(query, [orderDate, orderDate]).then(resolve).catch(reject);
+  });
 }
 
 const getStdSkuBySizeColor = (productCode, sizeCode, productColor) => {
-    return new Promise((resolve, reject) => {
-        const sQ = '\
-            SELECT A.STD_SKU\
-              FROM PRODUCT_MAP A\
-                 , INVENTORY B\
-                 , STD_SIZE C\
-             WHERE A.STD_SKU       = B.STD_SKU\
-               AND B.SIZE_CODE     = C.SIZE_CODE\
-               AND A.PRODUCT_CODE  = ?\
-               AND C.SIZE_CODE     = ?\
-               AND B.PRODUCT_COLOR = ?';
-
-        mgr.executeSelect(sQ, [productCode, sizeCode, productColor]).then(resolve).catch(reject);
-    });
+  return new Promise((resolve, reject) => {
+    const query = queries.retrieveStdSkuBySizeColor();
+    mgr.executeSelect(query, [productCode, sizeCode, productColor]).then(resolve).catch(reject);
+  });
 }
 
 const insertProductOrder = ({ORDER_DATE, ORDER_SEQ, STD_SKU, PRODUCT_CODE, BRAND_CODE, VENDOR_CODE, ORDER_QTY, ORDER_TM}) => {
     console.log(ORDER_DATE);
     return (connection => {
-        const iQ = '\
-            INSERT\
-              INTO PRODUCT_ORDER (\
-                   ORDER_DATE\
-                 , ORDER_SEQ\
-                 , STD_SKU\
-                 , PRODUCT_CODE\
-                 , BRAND_CODE\
-                 , VENDOR_CODE\
-                 , ORDER_QTY\
-                 , ORDER_TM\
-            )\
-            VALUES (\
-                   ?\
-                 , ?\
-                 , ?\
-                 , ?\
-                 , ?\
-                 , ?\
-                 , ?\
-                 , ?\
-            )';
+      const query = queries.insertProductOrder();
 
         return new Promise((resolve, reject) => {
-            connection.query(iQ, [ORDER_DATE, ORDER_SEQ, STD_SKU, PRODUCT_CODE, BRAND_CODE, VENDOR_CODE, ORDER_QTY, ORDER_TM], (err, results) => {
+            connection.query(query, [ORDER_DATE, ORDER_SEQ, STD_SKU, PRODUCT_CODE, BRAND_CODE, VENDOR_CODE, ORDER_QTY, ORDER_TM], (err, results) => {
                 if (err) {
                     reject(err);
                     return;
@@ -206,29 +262,19 @@ const insertProductOrder = ({ORDER_DATE, ORDER_SEQ, STD_SKU, PRODUCT_CODE, BRAND
     });
 }
 
-const updateOrderStatus = (orderNo, marketId, shippingStatus, procDt, procTm, empId) => {
-    return (connection => {
-        const uQ = '\
-            UPDATE `ORDER`\
-               SET SHIPPING_STATUS  = ?\
-                 , EMPLOYEE_ID      = ?\
-                 , PROC_DT          = ?\
-                 , PROC_TM          = ?\
-             WHERE CHANNEL_ORDER_NO = ?\
-               AND MARKET_ID        = ?';
+const getOrderHistory = (orderDateFr, orderDateTo) => {
+  return new Promise((resolve, reject) => {
+    const query = queries.retrieveProductOrderList();
+    mgr.executeSelect(query, [orderDateFr, orderDateTo]).then(resolve).catch(reject);
+  });
+} 
 
-        return new Promise((resolve, reject) => {
-            connection.query(uQ, [shippingStatus, empId, procDt, procTm, orderNo, marketId], (err, results) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-
-                resolve(results);
-            });
-        });
-    });
-}
+const getOrderDetail = (orderDate, orderSeq) => {
+  return new Promise((resolve, reject) => {
+    const query = queries.retrieveProductOrderDetail();
+    mgr.executeSelect(query, [orderDate, orderSeq]).then(resolve).catch(reject);
+  });
+} 
 
 router.get('/brand_list', (req, res, next) => {
     getBrandListHasProducts().then(ret => {
@@ -475,7 +521,7 @@ router.post('/place_order', function(req, res, next) {
         return;
     }
 
-    getMaxOrderSeq(list[0].ORDER_DATE).then(ret => {
+    getMaxProductOrderSeq(list[0].ORDER_DATE).then(ret => {
         if (ret.length < 1) {
             const errMsg = `Failed to get the maximum sequence from PRODUCT_ORDER with ORDER_DATE(${list[0].ORDER_DATE})`;
             console.log(errMsg);
@@ -538,26 +584,124 @@ router.post('/place_order', function(req, res, next) {
 
 router.get('/place_order', function(req, res, next) {
 
-  const gmailConfig = configReader.getGmailConfig();
-  const param = {
-    id: gmailConfig.id,
-    to: 'jungbom@hatandbeyond.com',
-    subject: 'Email Test',
-    message: 'Hello World!'
-  }
+  // const gmailConfig = configReader.getGmailConfig();
+  // const param = {
+  //   id: gmailConfig.id,
+  //   to: receiver,
+  //   subject: 'Email Test',
+  //   message: 'Hello World!'
+  // }
 
-  googleMailUtil.sendEmail(param)
-    .then(response => {
-      console.log(response);
-      res.json({ status: response.status, statusText: response.statusText });
-    }).catch(err => {
-      console.log(err);
-      res.json({ status: '400', statusText: 'Failed to send email' });
+  // googleMailUtil.sendEmail(param)
+  //   .then(response => {
+  //     console.log(response);
+  //     res.json({ status: response.status, statusText: response.statusText });
+  //   }).catch(err => {
+  //     console.log(err);
+  //     res.json({ status: '400', statusText: 'Failed to send email' });
+  //   });
+
+  
+  let loc = path.resolve('.');
+  loc = path.join(loc, 'Book1.xlsx');
+
+  const data = fs.readFileSync(loc);
+
+  // const readStream = fs.createReadStream(loc);
+  // readStream.on('data', (chunk => data += chunk)).on('end', () => {
+    // const base64Encorded = Base64.encode(data).replace(/\+/g, '-').replace(/\//g, '_');
+    const base64Encorded = data.toString('BASE64');
+
+    // console.log(base64Encorded);
+    
+    const sgMail = require('@sendgrid/mail');
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    const msg = {
+      to: [{email: 'test@test.com', name: 'tester'}],
+      cc: [{email: 'test.test@test.com', name: 'tester'}],
+      from: {email: process.env.DEFAULT_EMAIL_ADDRESS, name: process.env.DEFAULT_EMAIL_ADDRESS},
+      subject: 'Sending email test',
+      text: 'Hello world',
+      html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+      attachments: [{
+        content: base64Encorded,
+        filename: 'Book1.xlsx'
+      }]
+    };
+
+    sgMail.send(msg).then(response => console.log(response));
+  // });
+});
+
+router.get('/order_history', function(req, res, next) {
+  const curDate = datetimeUtil.getCurrentDttm().slice(0, 8);
+  const orderDateFr = req.query.order_date_fr || curDate;
+  const orderDateTo = req.query.order_date_to || curDate;
+
+  getOrderHistory(orderDateFr, orderDateTo).then(ret => {
+    res.json(ret);
+  }).catch(err => {
+    if (err.status && -1 === err.status) {
+        res.json(err);
+        return;
+    }
+
+    console.log(err);
+    return;
+  });
+});
+
+router.get('/order_detail', function(req, res, next) {
+  const orderDate = req.query.order_date;
+  const orderSeq = req.query.order_seq;
+
+  getOrderDetail(orderDate, orderSeq).then(async ret => {
+    const orderObj = {};
+    ret.forEach(order => {
+      const orderSet = orderObj[order["PRODUCT_CODE"]] || {}
+      const colorVariant = orderSet["colorVariant"] || {};
+      const orderItems = colorVariant[order.PRODUCT_COLOR] || {};
+      
+      orderItems[order.SIZE_CODE] = order;
+      colorVariant[order.PRODUCT_COLOR] = orderItems;
+      orderSet["colorVariant"] = colorVariant;
+      orderSet["vendorName"] = order.VENDOR_NAME;
+      orderSet["productTitle"] = order.PRODUCT_TITLE;
+      orderSet["productCode"] = order.PRODUCT_CODE;
+      orderSet["totalQty"] = (orderSet["totalQty"] || 0) + order.ORDER_QTY;
+      orderObj[order.PRODUCT_CODE] = orderSet;
     });
+
+    const orderList = [];
+    for (let item in orderObj) {
+      const orderSet = orderObj[item];
+      
+      const colorVariant = [];
+      for (let color in orderSet.colorVariant) {
+        colorVariant.push({"productColor": color, "sizeVariant": orderSet.colorVariant[color]});
+      }
+
+      orderSet.colorVariant = colorVariant;
+
+      const sizeVariant = await getProductSizeVariantList(item);
+      orderSet['sizeVariant'] = sizeVariant;
+
+      orderList.push(orderSet);
+    }
+
+    res.json(orderList);
+  }).catch(err => {
+    if (err.status && -1 === err.status) {
+        res.json(err);
+        return;
+    }
+
+    console.log(err);
+    return;
+  });
 });
 
 module.exports = (transactionMgr) => {
     mgr = transactionMgr;
-
     return router;
 };
