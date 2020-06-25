@@ -12,8 +12,6 @@ const getOrderFormConfig = () => getConfig('OrderForm');
 const getSlackConfig = () => getConfig('SlackAPI');
 const getGmailConfig = () => getConfig('Gmail');
 
-}
-
 module.exports = () => {
   if (!configObj) {
     const configFile = fs.readFileSync(CONFIG_FILE);
