@@ -6,12 +6,16 @@ const fs = require('fs');
 const readline = require('readline');
 const stream = require('stream');
 
+require('dotenv').config();
+process.env.__basedir = __dirname;
+
 const orderRouter = require('./routes/order');
 const userRouter = require('./routes/user');
 const punchClockRouter = require('./routes/punch_clock');
 const orderForm = require('./routes/orderForm');
 
 const app = express(), port = process.env.PORT || 3000;
+
 
 const connMgr = require('./util/transactionMgr')();
 
