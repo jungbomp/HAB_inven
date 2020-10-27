@@ -50,7 +50,7 @@ const executeTransaction = queryFuncs => {
                 try {
                     for (let i = 0; i < queryFuncs.length; i++) {
                         const results = await queryFuncs[i](connection);
-                        // console.dir(results);
+                        // console.log(results);
                     }
 
                     connection.commit(err => {
@@ -61,8 +61,10 @@ const executeTransaction = queryFuncs => {
 
                     resolve();
                 } catch (error) {
+                    console.log('executeTransaction');
+                    console.log(error);
                     connection.rollback();
-                    reject(err);
+                    reject(error);
                 } finally {
                     connection.release();
                 }

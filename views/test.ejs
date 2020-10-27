@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <% for (var i = 0; i < labelList.length; ++i) { %>
+  <div class="wrapper">
+    <% while (i < labelList.length) { %>
+    <div class="labelWrapper">
+      <img src="<%= labelList[i].IMAGE_PATH %>" class="productImage">
+      <img src="http://ec2-54-183-214-25.us-west-1.compute.amazonaws.com:3000/product_background.png" class="backgroundImage">
+      <div class="sizeText">
+        <div><span><%= labelList[i].SIZE %></span></div>
+      </div>
+      <div class="colorText">
+        <div><span><%= labelList[i].COLOR.split(" ").map((v) => v.toLowerCase()).reduce((acc, cur) => acc + " " + cur.charAt(0).toUpperCase() + cur.substring(1), "") %></span></div>
+      </div>
+      <div class="pidText">
+        <div><span><%= labelList[i].PRODUCT_CODE %></span></div>
+      </div>
+      <div class="nameText">
+        <div><span><%= labelList[i].NAME %></span></div>
+      </div>
+    </div>
+    <% if (i % 4 == 3) break; %>
+    <% i++ %>
+    <% } %>
+  </div>
+  <% } %>
+</body>
+<style>
+  @media print {
+    @page { 
+      size: 11in 8.5in; 
+      margin: 0;
+    }
+
+    @page:first { margin-top: 0; } 
+  }
+
+  @import url(https://fonts.googleapis.com/css?family=Helvetica+Neue);
+  /* body {
+    font-family: 'Helvetica Neue', sans-serif;
+  } */
+  
+  body { 
+    font-family: -apple-system, "Helvetica Neue", "Lucida Grande", sans-serif;
+    background-color: crimson;
+  }
+
+  .wrapper {
+    /* border-width: 1px;
+    border-style: solid; */
+    background-color: coral;
+    padding: 14.64vh 0;
+    margin: 0 auto;
+    overflow: auto;
+    width: 91.9vw; 
+    height: 70.49vh;
+  }
+
+  .labelWrapper {
+    /* border-width: 1px;
+    border-style: solid; */
+    position: relative;
+    float: left;
+    left: 0;
+    top: 0;
+    width: 49.0%;
+    height: 49.0%;
+    margin: 0.5%;
+  }
+
+  .productImage {
+    position: absolute;
+    height: 100%;
+  }
+
+  .backgroundImage {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+  }
+
+  .labelWrapper>div {
+    /* border-width: 1px;
+    border-style: solid; */
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .labelWrapper>div>div {
+    margin: auto 0;
+    /* padding: 0 10px; */
+  }
+
+  .sizeText {
+    top: 0px;
+    left: 400px;
+    width: 70px;
+    height: 65px;
+  }
+
+  .colorText {
+    top: 70px;
+    left: 355px;
+    width: 115px;
+    height: 65px;
+  }
+
+  .pidText {
+    top: 140px;
+    left: 315px;
+    width: 155px;
+    height: 65px;
+  }
+
+  .nameText {
+    top: 210px;
+    left: 270px;
+    width: 200px;
+    height: 65px;
+  }
+</style>
+</html>

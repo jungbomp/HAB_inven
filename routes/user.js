@@ -6,6 +6,20 @@ const router = express.Router();
 
 let mgr = null;
 
+const getAllEmployeeInfo = () => {
+    return new Promise((resolve, reject) => {
+        const sQ = '\
+            SELECT EMPLOYEE_ID\
+                 , FIRST_NAME\
+                 , LAST_NAME\
+                 , DEPARTMENT_NAME\
+                 , LAST_LOGIN_DTTM\
+              FROM `USER`';
+
+        mgr.executeSelect(sQ, []).then(resolve).catch(reject);
+    });
+}
+
 const getEmployeeInfo = (employeeId) => {
     return new Promise((resolve, reject) => {
         const sQ = '\
@@ -109,6 +123,12 @@ router.get('/', (req, res, next) => {
     console.log(`Can't find employee info.`);
     res.json({code: '900', status: 'Provide employee id'})
 });
+
+router.get('/allemployees', (req, res, next) => {
+    getAllEmployeeInfo().then(ret => {
+        res.json(ret);
+    })
+})
 
 router.get('/:employeeId', (req, res, next) => {
     const employeeId = req.params.employeeId;

@@ -8,9 +8,11 @@ INSERT
      , VENDOR_CODE
      , ORDER_QTY
      , ORDER_TM
+     , EMPLOYEE_ID
 )
 VALUES (
        ?
+     , ?
      , ?
      , ?
      , ?

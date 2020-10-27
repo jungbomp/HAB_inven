@@ -23,11 +23,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public', 'build')));
 
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'build', 'index.html'));
+});
+
 app.get('/packing_status_view', function(req, res) {
   res.sendFile(path.join(__dirname, 'public', 'build', 'index.html'));
 });
 
 app.get('/sales_by_sku_view', function(req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'build', 'index.html'));
+});
+
+app.get('/order_history_view', function(req, res) {
   res.sendFile(path.join(__dirname, 'public', 'build', 'index.html'));
 });
 

@@ -1,0 +1,62 @@
+<html lang="en"></html>
+  <head></head>
+  <body>
+    <div id="root">
+      <div>
+        <% for (var i = 0; i < orderList.length; ++i) { %>
+        <div>
+          <div style="width: 100%; display: flex; flex-direction: row; align-items: center; border-bottom: 1px solid;">
+            <div style="width: 14%; padding: 8px;">VENDOR</div>
+            <div style="width: 25%;">
+              <div style="padding: 8px;">ITEM</div>
+            </div>
+            <div style="width: 14%;">
+              <div style="padding: 8px;">COLOR</div>
+            </div>
+            <div style="width: 35%; display: flex; flex-direction: row; justify-content: space-around; align-items: center;">
+              <% for (var j = 0; j < orderList[i].sizeVariant.length; ++j) { %>
+              <div style="width: <%= 100/orderList[i].sizeVariant.length %>%; text-align: center;"><%= orderList[i].sizeVariant[j].SHORT_SIZE_CODE %></div>
+              <% } %>
+            </div>
+            <div style="flex-grow: 1; text-align: center; align-self: center; padding: 8px;">TOTAL QTY</div>
+          </div>
+          <div style="width: 100%; display: flex; flex-direction: row; border-bottom: 1px solid;">
+            <div style="width: 14%; padding: 8px;">
+              <%= orderList[i].vendorName %>
+            </div>
+            <div style="width: 25%; display: flex; flex-direction: column; border-right: 1px solid;">
+              <div style="padding: 8px;">
+                <%= orderList[i].productCode + (orderList[i].manufacturingCode !== '' ? ' ('+orderList[i].manufacturingCode+')' : '' ) %>
+              </div>
+              <div style="padding: 8px;">
+                <%= orderList[i].productTitle %>
+              </div>
+            </div>
+            <div style="width: 14%; display: flex; flex-direction: column; border-right: 1px solid;">
+              <% for (var k = 0; k < orderList[i].colorVariant.length; ++k) { %>
+              <div style="padding: 8px;">
+                <%= orderList[i].colorVariant[k].manufacturingColor || orderList[i].colorVariant[k].productColor %>
+              </div>
+              <% } %>
+            </div>
+            <div style="width: 35%; display: flex; flex-direction: column; border-right: 1px solid;">
+              <% for (var k = 0; k < orderList[i].colorVariant.length; ++k) { %>
+              <div style="display: flex; flex-direction: row; flex-grow: 1; justify-content: space-around; align-items: center;">
+                <% for (var j = 0; j < orderList[i].sizeVariant.length; ++j) { %>
+                <div style="width: <%= 100/orderList[i].sizeVariant.length %>%; text-align: center;">
+                  <%= ((orderList[i].colorVariant[k].sizeVariant[orderList[i].sizeVariant[j].SIZE_CODE] && orderList[i].colorVariant[k].sizeVariant[orderList[i].sizeVariant[j].SIZE_CODE].ORDER_QTY) || '.') %>
+                </div>
+                <% } %>
+              </div>
+              <% } %>
+            </div>
+            <div style="flex-grow: 1; align-self: center; text-align: center; padding: 8px;">
+              <%= orderList[i].totalQty %>
+            </div>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </body>
+</html>

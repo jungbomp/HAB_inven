@@ -7,7 +7,7 @@ let configObj = null;
 const getConfig = type => Object.assign({}, configObj[type]);
 
 const getDBConnectionConfig = () => getConfig('DBConnect');
-const getClockInConfig = () => getConfig('ClickIn');
+const getClockInConfig = () => getConfig('ClockIn');
 const getOrderFormConfig = () => getConfig('OrderForm');
 const getSlackConfig = () => getConfig('SlackAPI');
 const getGmailConfig = () => getConfig('Gmail');
